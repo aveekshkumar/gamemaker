@@ -22,3 +22,5 @@ switch(height_choice) {
 // Spawn a warning indicator
 var warning = instance_create_layer(x, 0, "Instances", oWarning);
 warning.linked_obstacle = id;
+
+dodge_counted = false;

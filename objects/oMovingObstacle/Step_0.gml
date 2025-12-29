@@ -1,73 +1,63 @@
-// Pause check
-if instance_exists(oRunner) && oRunner.game_paused { exit; }
+/// --- oMovingObstacle Step Event (fixed) ---
+if (global.game_paused) exit;
 
-if (variable_global_exists("game_won") && global.game_won) exit;
+// Safety: ensure scroll speed
+if (!variable_global_exists("scroll_speed")) global.scroll_speed = 0.24;
 
-// vertical scroll
-if (variable_global_exists("scroll_speed")) y += global.scroll_speed;
+// === FALLING DOWN ===
+y += global.scroll_speed;
 
-// if this is a moving obstacle with target_x/move_rate, glide sideways
-if (variable_instance_exists(id, "target_x") && variable_instance_exists(id, "move_rate")) {
-    x = lerp(x, target_x, move_rate);
+// Destroy if off-screen
+if (y > room_height + sprite_height) instance_destroy();
+
+//if touching obstacle destroy
+if place_meeting(x, y, oObstacle){
+	instance_destroy();
 }
 
-// destroy when below screen
-if (y > room_height + 40) instance_destroy();
+// === INITIALIZE VARIABLES (first-time setup) ===
+if (!variable_instance_exists(id, "move_timer")) move_timer = 0;
+if (!variable_instance_exists(id, "move_dir")) move_dir = choose(-1, 1); // random start
+if (!variable_instance_exists(id, "side_speed")) side_speed = 2;         // horizontal speed
+if (!variable_instance_exists(id, "lane_limit_left")) lane_limit_left = x - 40;  // lane bounds
+if (!variable_instance_exists(id, "lane_limit_right")) lane_limit_right = x + 40;
 
-// Lane switching logic - every 3 seconds
-lane_switch_timer--;
-if lane_switch_timer <= 0 {
-    // Pick a new adjacent lane
-    if lane == 0 { 
-        target_lane = 1; // Can only go right
-    } else if lane == 2 { 
-        target_lane = 1; // Can only go left
-    } else { 
-        target_lane = choose(0, 2); // Middle can go left or right
-    }
-    
-    lane_switch_timer = 180; // Reset to 3 seconds
-}
+// === SIDE MOVEMENT ===
+move_timer++;
 
-// Move smoothly toward target lane
-if x < lane_x[target_lane] {
-    x += move_speed;
-    if x >= lane_x[target_lane] {
-        x = lane_x[target_lane];
-        lane = target_lane;
-    }
-}
-if x > lane_x[target_lane] {
-    x -= move_speed;
-    if x <= lane_x[target_lane] {
-        x = lane_x[target_lane];
-        lane = target_lane;
+// Start moving sideways after 1 second
+if (move_timer > room_speed) {
+    x += move_dir * side_speed;
+
+    // Bounce back within lane limits
+    if (x <= lane_limit_left || x >= lane_limit_right) {
+        move_dir *= -1;
     }
 }
 
-// Destroy when off-screen
-if y > room_height + 64 {
-    instance_destroy();
-}
+/// --- DODGE CHECK ---
+if (!variable_instance_exists(self, "dodged")) dodged = false;
 
-// Destroy when hitting regular obstacles
-if place_meeting(x, y, oObstacle) {
-    instance_destroy();
-}
+// if obstacle moved below player and wasn’t counted
+if (!dodged && y > oRunner.y && !place_meeting(x, y, oRunner)) {
+    dodged = true;
+    global.dodge_count += 1;
 
-// Collision with player
-if place_meeting(x, y, oRunner) {
-    if !oRunner.is_jumping {
-        if oRunner.dodge_count > 0 {
-            show_debug_message("Combo streak lost!");
+    // Combo achieved!
+    if (global.dodge_count >= global.dodges_needed) {
+        global.dodge_count = 0;
+        global.combo += 1;
+
+        // optional popup
+        with (instance_create_layer(oRunner.x, oRunner.y - 40, "Instances", oPopupText)) {
+            text = "COMBO x" + string(global.combo);
+            color = c_yellow;
         }
-        oRunner.dodge_count = 0;
-        oRunner.dodge_counter = 1;
-        oRunner.dodges_needed = 5;
-        
-        oRunner.shake_magnitude = 8;
-        oRunner.shake_length = 30;
-        oRunner.death_timer = 30;
-        audio_stop_all();
+    } else {
+        // small “DODGE!” popup for normal ones
+        with (instance_create_layer(oRunner.x, oRunner.y - 30, "Instances", oPopupText)) {
+            text = "DODGE!";
+            color = c_lime;
+        }
     }
 }

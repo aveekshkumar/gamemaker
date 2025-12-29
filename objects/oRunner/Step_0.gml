@@ -1,299 +1,195 @@
+/// --- oRunner Step Event ---
+
+// ✅ RESET COINS WHEN ENTERING GAME
+if (!variable_instance_exists(self, "coins_initialized")) {
+    coins = 0;
+    coins_initialized = true;
+}
+
+if (!variable_global_exists("scroll_speed")) global.scroll_speed = 4.5; // adjust for balance
+
 // Pause toggle
-if keyboard_check_pressed(ord("P")) {
-    game_paused = !game_paused;
-    
-    if game_paused {
+if (keyboard_check_pressed(ord("P"))) {
+    global.game_paused = !global.game_paused;
+
+    if (global.game_paused) {
         audio_pause_all();
     } else {
         audio_resume_all();
     }
 }
 
-// If paused, skip all other code
-if game_paused {
-    exit;
+// Skip updates when paused
+if (global.game_paused) exit;
+
+// Keep best score saved so Mission Menu updates next time
+if (!variable_global_exists("best_score")) global.best_score = 0;
+if (global.score > global.best_score) {
+    global.best_score = global.score;
+    ini_open("save.ini");
+    ini_write_real("PlayerData", "BestScore", global.best_score);
+    ini_close();
 }
+
+ // Example base tick:
+global.score += 1 * global.score_mult;
 
 // Night mode toggle
 if keyboard_check_pressed(ord("N")) {
     night_mode = !night_mode;
 }
 
-// Increment score
-global.score += 1;
+// Use actual scroll speed for distance
+var ds = variable_global_exists("scroll_speed") ? global.scroll_speed : move_speed;
+distance += ds / room_speed; // adds 1 per second if ds == 1
 
-/// --- Color Burst Trigger ---
-if (!burst_active && global.score >= burst_next_at) {
-    burst_active  = true;
-    burst_timer   = 0;
-    burst_next_at += burst_interval; // next trigger at +1000
-}
-
-if (burst_active) {
-    burst_timer++;
-    if (burst_timer >= burst_length) {
-        burst_active = false;
-        burst_timer  = 0;
+/// Celebration fireworks
+if (global.score > 0 && global.score mod 500 == 0 && !instance_exists(oFirework)) {
+    for (var i = 0; i < irandom_range(2, 3); i++) {
+        instance_create_depth(irandom(room_width), irandom_range(80, 200), -50, oFirework);
     }
 }
 
-distance += move_speed / room_speed; // adds per second
-
-// Lane switcher
-if keyboard_check_pressed(vk_left) && lane > 0 {
-    lane--;
-	lane_flash_t = 20; // frames of flash
+// Aura updates
+aura_pulse_t += 0.08;
+var target = (global.score >= aura_min_score) ? 1 : 0;
+if (global.score >= aura_min_score) {
+    var extra = clamp((global.score - aura_min_score) / 4000, 0, 0.5);
+    target = clamp(1.0 + extra, 0, 1.5);
 }
-if keyboard_check_pressed(vk_right) && lane < 2 {
-    lane++;
-	lane_flash_t = 20; // frames of flash
-}
+if (aura_strength < target) aura_strength = min(target, aura_strength + aura_rise);
+else aura_strength = max(0, aura_strength - aura_fall);
 
+// Color Burst update
+if (!burst_active && burst_strength <= 0 && global.score >= burst_next_at) {
+    burst_active = true;
+    burst_timer = 0;
+    burst_next_at += burst_interval;
+}
+if (burst_active) {
+    burst_strength = min(1, burst_strength + burst_rise);
+    burst_timer++;
+    if (burst_timer >= burst_length) burst_active = false;
+} else burst_strength = max(0, burst_strength - burst_fall);
+
+// --- LANE SWITCHING ---
+if keyboard_check_pressed(vk_left) && lane > 0 { lane--; lane_flash_t = 20; }
+if keyboard_check_pressed(vk_right) && lane < 2 { lane++; lane_flash_t = 20; }
 x = lane_x[lane];
 
-/// --- HOT LANE logic ---
-if (hot_timer > 0) {
-    hot_timer--;
-
-    // if you're in the hot lane, drip bonus once per second
-    if (lane == hot_lane) {
-        hot_tick += 1;
-        if (hot_tick >= room_speed) {
-            hot_tick = 0;
-            coins += 1;        // free coin per second in hot lane
-            score += 10;       // small score bonus too
-            // optional: tiny popup bounce if you already use popup_text
-            // popup_text = "+1 (HOT LANE)";
-            // popup_timer = 20;
-        }
-    } else {
-        hot_tick = 0; // left the hot lane → stop ticking
-    }
-}
-else {
-    // waiting for the next hot lane
-    if (hot_cooldown > 0) {
-        hot_cooldown--;
-    } else {
-        // start a new hot lane
-        hot_lane  = irandom(2);               // pick 0/1/2
-        hot_timer = round(room_speed * 10);   // 10 seconds hot
-        hot_cooldown = hot_gap;               // set gap for next cycle
-        hot_tick = 0;
-
-        // optional: announce it
-        if (is_undefined(popup_timer)) { /* ignore if you don't use popups */ } else {
-            popup_text = "HOT LANE!";
-            popup_timer = 45;
-        }
-    }
-}
-
-// Jumping
-if keyboard_check_pressed(vk_space) && !is_jumping {
+// --- JUMP + LAND ---
+if keyboard_check_pressed(vk_space) && !is_jumping && y >= 700 {
     is_jumping = true;
     jump_height = -jump_speed;
-    
-    repeat(5) {
-        instance_create_layer(x + random_range(-10, 10), y + 25, "Instances", oParticle);
-    }
+    was_airborne = true;
+    repeat(5) instance_create_layer(x + random_range(-10, 10), y + 25, "Instances", oParticle);
 }
-
-if is_jumping {
+if (is_jumping) {
     y += jump_height;
     jump_height += grav;
-    
-    if y >= 700 {
+    if (y >= 700) {
         y = 700;
         is_jumping = false;
         jump_height = 0;
+        if (was_airborne && !shockwave_active) {
+            shockwave_active = true;
+            shockwave_timer = 0;
+            shockwave_radius = 0;
+            was_airborne = false;
+        }
+        shadow_scale = 1.4;
     }
-}
-
-// On landing
-if (is_jumping && y >= 700) {
-    y = 700; is_jumping = false; jump_height = 0;
-    shadow_scale = 1.4;   // squash
-    shake_magnitude = 3; shake_length = 6;
-}
+} else was_airborne = false;
 shadow_scale = max(1, shadow_scale - 0.02);
 
-// Dash ability
-dash_cooldown--;
-if dash_cooldown < 0 { dash_cooldown = 0; }
+// --- SHOCKWAVE ---
+if (shockwave_active) {
+    shockwave_timer++;
+    shockwave_radius = lerp(shockwave_radius, shockwave_max, 0.25);
+    if (shockwave_timer > room_speed * 0.4) shockwave_active = false;
+}
 
-// Activate dash with D key
+// --- DASH ---
+dash_cooldown = max(0, dash_cooldown - 1);
 if keyboard_check_pressed(ord("D")) && dash_cooldown <= 0 && !dash_active {
     dash_active = true;
     dash_start_y = y;
-    y -= 64; // Move up 64 pixels
-    dash_duration = 240; // 4 seconds at 60fps
-    dash_cooldown = 1200; // 20 seconds cooldown (20 * 60)
+    y -= 64;
+    dash_duration = 240;
+    dash_cooldown = 1200;
 }
-
-// Dash duration countdown
 if dash_active {
     dash_duration--;
-    if dash_duration <= 0 {
-        y = dash_start_y; // Return to original height
-        dash_active = false;
-    }
+    if (dash_duration <= 0) { y = dash_start_y; dash_active = false; }
 }
 
-// === COIN MAGNET ===
-// Press 'E' to toggle when off cooldown (change key if you like)
-if (keyboard_check_pressed(ord("E"))) {
+// --- MAGNET ---
+if keyboard_check_pressed(ord("E")) {
     if (!magnet_active && magnet_cd <= 0) {
         magnet_active = true;
-        magnet_time   = magnet_time_max;
-        // tiny popup if you use popups
-        popup_text  = "Magnet ON";
+        magnet_time = magnet_time_max;
+        popup_text = "Magnet ON";
         popup_timer = 45;
     } else if (magnet_active) {
-        // allow early cancel
         magnet_active = false;
-        popup_text  = "Magnet OFF";
+        popup_text = "Magnet OFF";
         popup_timer = 30;
     }
 }
-
-// tick timers
 if (magnet_active) {
     magnet_time--;
     if (magnet_time <= 0) {
         magnet_active = false;
-        magnet_cd = magnet_cd_max;  // start cooldown
+        magnet_cd = magnet_cd_max;
     }
-} else if (magnet_cd > 0) {
-    magnet_cd--;
-}
+} else if (magnet_cd > 0) magnet_cd--;
 
-// --- Pull regular coins ---
-if (magnet_active) {
-    with (oCoin) {
-        var dx = other.x - x;
-        var dy = other.y - y;
-        var ex = dx*dx / (other.magnet_rx*other.magnet_rx);
-        var ey = dy*dy / (other.magnet_ry*other.magnet_ry);
-        if (ex + ey <= 1) {
-            var d = max(1, point_distance(x, y, other.x, other.y));
-            var t = clamp((ex + ey), 0, 1);
-            var boost = 1.0 + 0.75 * (1.0 - t);
-            x += (dx / d) * other.magnet_power * 12 * boost;
-            y += (dy / d) * other.magnet_power * 12 * boost;
-            if (point_distance(x, y, other.x, other.y) < 8) { x = other.x; y = other.y; }
-        }
-    }
-}
-
-// --- Pull gem coins too (same logic) ---
-if (magnet_active) {
-    with (oGemCoin) {
-        var dx = other.x - x;
-        var dy = other.y - y;
-        var ex = dx*dx / (other.magnet_rx*other.magnet_rx);
-        var ey = dy*dy / (other.magnet_ry*other.magnet_ry);
-        if (ex + ey <= 1) {
-            var d = max(1, point_distance(x, y, other.x, other.y));
-            var t = clamp((ex + ey), 0, 1);
-            var boost = 1.0 + 0.85 * (1.0 - t); // tiny bit stronger for gems (optional)
-            x += (dx / d) * other.magnet_power * 12 * boost;
-            y += (dy / d) * other.magnet_power * 12 * boost;
-            if (point_distance(x, y, other.x, other.y) < 8) { x = other.x; y = other.y; }
-        }
-    }
-}
-
-//death timer
-if death_timer > 0 {
+// --- Death Logic ---
+if (death_timer > 0) {
     death_timer--;
-    if death_timer <= 0 {
-        // Create game over and pass data
-        var game_over = instance_create_layer(0, 0, "Instances", oGameOver);
-        game_over.final_score = score;
-        game_over.final_time_seconds = floor(oSpawner.survival_time / 60);
-        game_over.final_minutes = floor(game_over.final_time_seconds / 60);
-        game_over.final_seconds = game_over.final_time_seconds - (game_over.final_minutes * 60);
-        
-        // Destroy all game objects
-        with(oObstacle) instance_destroy();
-        with(oMovingObstacle) instance_destroy();
-        with(oSpawner) instance_destroy();
-        with(oParticle) instance_destroy();
-        with(oCoin) instance_destroy();
-		with(oGemCoin) instance_destroy();
-		with(oWarning) instance_destroy();
-		with(oDrone) instance_destroy();
-        
-        instance_destroy();
+    if (death_timer <= 0) {
+    show_debug_message("💀 Game Over! Final coins this run: " + string(coins));
+    
+    // ✅ SAVE COINS BEFORE LEAVING!
+    show_debug_message("💀 Game Over! Final coins this run: " + string(coins));
+
+    ini_open(global.save_path);
+    ini_write_real("PlayerData", "TotalCoins", global.total_coins);  // ✅ USE GLOBAL!
+    ini_write_real("PlayerData", "Gems", global.total_gems);
+    ini_close();
+    show_debug_message("💾 SAVED on death: Coins=" + string(global.total_coins) + " Gems=" + string(global.total_gems));
+    
+    with (oGemCoin) instance_destroy();
+    with (oCoin) instance_destroy();
+    with (oObstacle) instance_destroy();
+    with (oDrone) goodbye = true;
+    room_goto(rm_start);
     }
 }
 
-// Dodge detection for combo
-with(oObstacle) {
-    if bbox_top > other.y + 32 && !variable_instance_exists(id, "counted") {
-        other.dodge_count++;
-        counted = true;
-        
-        if other.dodge_count >= other.dodges_needed {
-            if variable_instance_exists(other, "score") {
-                var bonus = 10 * other.dodge_counter;
-                other.score += bonus;
-            }
-            
-            other.dodge_counter++;
-            other.dodges_needed = 5 + (other.dodge_counter * 2);
-            other.dodge_count = 0;
-        }
-    }
-}
-
-with(oMovingObstacle) {
-    if bbox_top > other.y + 32 && !variable_instance_exists(id, "counted") {
-        other.dodge_count++;
-        counted = true;
-        
-        if other.dodge_count >= other.dodges_needed {
-            if variable_instance_exists(other, "score") {
-                var bonus = 10 * other.dodge_counter;
-                other.score += bonus;
-            }
-            
-            other.dodge_counter++;
-            other.dodges_needed = 5 + (other.dodge_counter * 2);
-            other.dodge_count = 0;
-        }
-    }
-}
-
-// --- Perfect Run Glow update ---
-if (hit_obstacle) {
-    glow_timer  = 0;
-    glow_factor = 0;
-    hit_obstacle = false; // clear flag for next run
-} else {
-    glow_timer++;
-}
-
-// ramp up only after the 25s threshold, otherwise decay
-if (glow_timer >= glow_threshold) {
-    glow_factor = clamp(glow_factor + glow_rise, 0, 1);
-} else {
-    glow_factor = max(0, glow_factor - glow_fall);
-}
-
-/// --- TRAIL UPDATE ---
+// --- Energy Trail Update ---
 trail_timer++;
 if (trail_timer >= trail_gap) {
     trail_timer = 0;
     // shift points down
-    for (var i = trail_length - 1; i > 0; i--) {
+    for (var i = trail_max_points - 1; i > 0; i--) {
         trail_points[i] = trail_points[i - 1];
     }
+    // add current position at start
     trail_points[0] = [x, y];
 }
 
-// Change color when pressing P
-if (keyboard_check_pressed(ord("V"))) {
-    trail_color_index = (trail_color_index + 1) mod array_length(trail_colors);
+// --- Speed boost trail (visual only) ---
+if (global.owned_speed == 1) {
+    if (irandom(3) == 0) {
+        var px = x + irandom_range(-5, 5);
+        var py = y + 20 + irandom_range(-5, 5);
+
+        // create a yellow dust puff
+        part_particles_create(part_system, px, py, part_dust, 1);
+        part_type_color1(part_dust, c_yellow);   // sets color safely
+    }
 }
+
+/// --- oRunner Step Event (color sync) ---
+self.color = global.player_color;

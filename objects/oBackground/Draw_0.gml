@@ -1,41 +1,29 @@
-/// oBackground Draw
+/// oBackground — Draw (unchanged sky + NEW stars under clouds)
 
-var night = night_mode;
+// Sky (unchanged)
+draw_set_colour(current_color);
+draw_rectangle(0, 0, room_width, room_height, false);
 
-// --- smooth flat sky (no gradient blocks) ---
-if (night)
-    draw_clear_alpha(make_color_rgb(10, 15, 30), 1); // dark blue night
-else
-    draw_clear_alpha(make_color_rgb(130, 190, 250), 1); // light blue day
+// ⭐ Stars UNDER clouds
+for (var i = 0; i < array_length(stars); i++) {
+    var sx = stars[i][0];
+    var sy = stars[i][1];
+    var r  = stars[i][4];
+    var a  = stars[i][5];
 
-// --- stars (night) ---
-if (night) {
-    draw_set_colour(c_white);
-    for (var i = 0; i < star_count; i++) {
-        draw_rectangle(star_x[i], star_y[i], star_x[i] + 2, star_y[i] + 2, false);
-    }
+    draw_set_alpha(a * 0.9); // brighter fade
+    draw_set_colour(make_color_rgb(255, 230, 120));
+    draw_circle(sx, sy, r, false);
 }
 
-// --- clouds (day) ---
-if (!night) {
-    draw_set_alpha(0.4);
-    draw_set_colour(c_white);
-    for (var c = 0; c < cloud_count; c++) {
-        var cl = cloud[c];
-        draw_circle(cl.x, cl.y, cl.s, false);
-        draw_circle(cl.x - cl.s * 0.6, cl.y + 4, cl.s * 0.8, false);
-        draw_circle(cl.x + cl.s * 0.6, cl.y + 6, cl.s * 0.7, false);
-    }
-    draw_set_alpha(1);
+// ☁️ Clouds ON TOP (unchanged)
+draw_set_alpha(0.6);
+draw_set_colour(c_white);
+for (var j = 0; j < array_length(clouds); j++) {
+    var cx = clouds[j][0];
+    var cy = clouds[j][1];
+    draw_ellipse(cx - 30, cy - 10, cx + 30, cy + 10, false);
 }
 
-// --- meteors ---
-draw_set_colour(make_color_rgb(255, 200, 120));
-for (var m = 0; m < ds_list_size(meteor_list); m++) {
-    var met = meteor_list[| m];
-    for (var t = 0; t < 10; t++) {
-        var tx = met.x - lengthdir_x(t * 3, met.ang);
-        var ty = met.y - lengthdir_y(t * 3, met.ang);
-        draw_circle(tx, ty, max(1, 5 - t * 0.4), false);
-    }
-}
+draw_set_alpha(1);
+draw_set_colour(c_white);

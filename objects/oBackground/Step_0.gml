@@ -1,57 +1,29 @@
-/// oBackground Step
+/// oBackground — Step (original logic + star twinkle)
 
-// follow runner night toggle if available
-var night = instance_exists(oRunner) ? oRunner.night_mode : night_mode;
-night_mode = night;
+// Press L to change background color (unchanged behavior)
+if (keyboard_check_pressed(ord("L"))) {
+    theme_index  = (theme_index + 1) mod array_length(bg_colors);
+    target_color = bg_colors[theme_index];
 
-// get global scroll speed (fallback = 1)
-var spd = variable_global_exists("scroll_speed") ? global.scroll_speed : 1;
+    // keep the “snap then lerp” feel like before
+    current_color = target_color;
+}
 
-// ----- stars (night) -----
-if (night) {
-    for (var i = 0; i < star_count; i++) {
-        star_y[i] += star_speed * spd * 0.5;
-        if (star_y[i] > gh) {
-            star_y[i] = -4;
-            star_x[i] = irandom_range(0, gw);
-        }
+// Smooth fade toward target (unchanged)
+current_color = merge_color(current_color, target_color, lerp_speed);
+
+// Move clouds & wrap (unchanged)
+for (var i = 0; i < array_length(clouds); i++) {
+    clouds[i][0] -= clouds[i][2];
+    if (clouds[i][0] < -64) {
+        clouds[i][0] = room_width + irandom_range(0, 100);
+        clouds[i][1] = irandom_range(40, 180);
     }
 }
 
-// ----- clouds (day) -----
-if (!night) {
-    for (var c = 0; c < cloud_count; c++) {
-        var cl = cloud[c];
-        cl.y += cloud_speed * spd * 0.8;
-        cl.x += sin(current_time / 3000 + c) * 0.1; // gentle sideways drift
-        if (cl.y - cl.s > gh) {
-            cl.y = -cl.s - 8;
-            cl.x = irandom_range(0, gw);
-            cl.s = irandom_range(20, 42);
-        }
-        cloud[c] = cl;
-    }
-}
-
-// ----- meteors -----
-meteor_timer--;
-if (meteor_timer <= 0) {
-    var count = irandom_range(2, 4);
-    for (var m = 0; m < count; m++) {
-        var mx = irandom_range(-40, gw + 40);
-        var my = -irandom_range(20, 200);
-        var mspd = random_range(6, 10);
-        var ang = 225 + random_range(-10, 10);
-        ds_list_add(meteor_list, {x: mx, y: my, spd: mspd, ang: ang});
-    }
-    meteor_timer = room_speed * 45;
-}
-
-// update meteors
-for (var k = ds_list_size(meteor_list) - 1; k >= 0; k--) {
-    var met = meteor_list[| k];
-    met.x += lengthdir_x(met.spd, met.ang);
-    met.y += lengthdir_y(met.spd, met.ang);
-    if (met.y > gh + 60 || met.x < -100) ds_list_delete(meteor_list, k);
-    else meteor_list[| k] = met;
+// ⭐ Update star twinkle
+for (var i = 0; i < array_length(stars); i++) {
+    stars[i][2] += stars[i][3];
+    var a = 0.5 + 0.5 * sin(degtorad(stars[i][2])); // slightly stronger pulse
+    stars[i][5] = clamp(a, 0.4, 1.0);
 }

@@ -1,5 +1,5 @@
 // Pause check
-if instance_exists(oRunner) && oRunner.game_paused { exit; }
+if (global.game_paused) exit;
 
 if (variable_global_exists("game_won") && global.game_won) exit;
 

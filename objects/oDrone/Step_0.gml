@@ -1,63 +1,79 @@
-/// oDrone Step (fixed)
+/// --- oDrone Step Event ---
+if (global.game_paused) exit;
 
-// Smooth follow
-if (instance_exists(follow_target)) {
+/// Smooth hover + auto-collects coins and gem coins + saves progress
+
+// === SMOOTH FOLLOW ===
+if (instance_exists(follow_target))
+{
     var tx = follow_target.x;
     var ty = follow_target.y + hover_height + sin(hover_t) * hover_range;
     x += (tx - x) * follow_speed;
     y += (ty - y) * follow_speed;
 }
 
-// Hover animation
+// === HOVER ANIMATION ===
 hover_t += hover_speed * room_speed;
 
-// Make sure the drone knows who to give points to
-var runner = instance_exists(follow_target) ? follow_target : noone;
-
-// animate the tether a tiny bit
+// === BEAM EFFECT COLOR ANIMATION ===
 beam_pulse += 0.15;
 beam_col = merge_color(make_color_rgb(120, 255, 120), make_color_rgb(180, 255, 200), 0.5 + 0.5 * sin(beam_pulse * 0.5));
 
-// --- Auto collect normal coins ---
-with (oCoin) {
-    var dx = other.x - x;
-    var dy = other.y - y;
-    if (dx*dx + dy*dy <= sqr(other.pull_radius)) {
-        var d = max(1, point_distance(x, y, other.x, other.y));
-        x += (dx / d) * other.pull_power * 10;
-        y += (dy / d) * other.pull_power * 10;
+// === COIN COLLECTION ===
+var range = 60; // pickup radius
 
-        if (point_distance(x, y, other.x, other.y) < 6) {
-            if (instance_exists(other.follow_target)) {
-                with (other.follow_target) {
-                    coins += 1;
-                    if (variable_global_exists("score")) global.score += 50;
-                    popup_text = "+1 (Drone)";
-                    popup_timer = 30;
-                }
+/// --- Drone Coin Collection Step ---
+
+// ✅ Only collect coins after oRunner is fully initialized
+if (instance_exists(oRunner) && variable_instance_exists(oRunner, "runner_init_complete")) {
+    with (oCoin)
+{
+    if (point_distance(x, y, other.x, other.y) < other.range)
+    {
+        var runner = instance_find(oRunner, 0);
+        if (instance_exists(runner))
+        {
+            // ✅ SAFETY RELOAD
+            if (!file_exists(global.save_path)) {
+                global.save_path = working_directory + "save.ini";
             }
-            instance_destroy();
+            ini_open(global.save_path);
+            var loaded_total = ini_read_real("PlayerData", "TotalCoins", 0);
+            ini_close();
+            
+            if (loaded_total > global.total_coins) {
+                global.total_coins = loaded_total;
+            }
+            
+            runner.coins += 1;
+            global.total_coins += 1;
+            
+            // ✅ SAVE GLOBAL TOTAL (like gems!)
+            ini_open(global.save_path);
+            ini_write_real("PlayerData", "TotalCoins", global.total_coins);  // Save GLOBAL total
+            ini_close();
+            
+            show_debug_message("💾 Coins saved: " + string(global.total_coins));
         }
+        instance_destroy();
     }
 }
-
-// --- Auto collect gem coins ---
-with (oGemCoin) {
-    var dx = other.x - x;
-    var dy = other.y - y;
-    if (dx*dx + dy*dy <= sqr(other.pull_radius)) {
-        var d = max(1, point_distance(x, y, other.x, other.y));
-        x += (dx / d) * other.pull_power * 10;
-        y += (dy / d) * other.pull_power * 10;
-
-        if (point_distance(x, y, other.x, other.y) < 6) {
-            if (instance_exists(other.follow_target)) {
-                with (other.follow_target) {
-                    coins += 5;
-                    if (variable_global_exists("score")) global.score += 500;
-                    popup_text = "+GEM (Drone)";
-                    popup_timer = 45;
-                }
+    
+    with (oGemCoin)
+    {
+        if (point_distance(x, y, other.x, other.y) < other.range)
+        {
+            var runner2 = instance_find(oRunner, 0);
+            if (instance_exists(runner2))
+            {
+                runner2.gems += 1;
+                global.total_gems += 1;
+                
+                ini_open(global.save_path);
+                ini_write_real("PlayerData", "Gems", global.total_gems);
+                ini_close();
+                
+                show_debug_message("💎 Gems saved: " + string(global.total_gems));
             }
             instance_destroy();
         }
