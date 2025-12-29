@@ -1,5 +1,5 @@
 // oBackgroundPixels Draw GUI Event
-draw_set_color(c_lime);
+draw_set_color(c_blue);
 for (var i = 0; i < array_length(pixels); i++) {
     var px = pixels[i];
     draw_set_alpha(px.alpha);
