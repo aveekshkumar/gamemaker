@@ -1,5 +1,5 @@
 // oLoginButton Draw GUI Event
-
+draw_sprite(sPresent, 0, x, y - 100);
 var button_color = can_claim ? color_available : color_claimed;
 var w = width * button_scale;
 var h = height * button_scale;

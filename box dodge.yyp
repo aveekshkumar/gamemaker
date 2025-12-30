@@ -87,6 +87,7 @@
     {"id":{"name":"sIconCoin","path":"sprites/sIconCoin/sIconCoin.yy",},},
     {"id":{"name":"sParticle","path":"sprites/sParticle/sParticle.yy",},},
     {"id":{"name":"sprAuraIcon","path":"sprites/sprAuraIcon/sprAuraIcon.yy",},},
+    {"id":{"name":"sPresent","path":"sprites/sPresent/sPresent.yy",},},
     {"id":{"name":"Sprite13","path":"sprites/Sprite13/Sprite13.yy",},},
     {"id":{"name":"sprShieldIcon","path":"sprites/sprShieldIcon/sprShieldIcon.yy",},},
     {"id":{"name":"sprSpeedIcon","path":"sprites/sprSpeedIcon/sprSpeedIcon.yy",},},

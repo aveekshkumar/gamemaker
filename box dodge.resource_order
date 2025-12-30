@@ -64,6 +64,7 @@
     {"name":"sIconCoin","order":7,"path":"sprites/sIconCoin/sIconCoin.yy",},
     {"name":"sParticle","order":2,"path":"sprites/sParticle/sParticle.yy",},
     {"name":"sprAuraIcon","order":10,"path":"sprites/sprAuraIcon/sprAuraIcon.yy",},
+    {"name":"sPresent","order":14,"path":"sprites/sPresent/sPresent.yy",},
     {"name":"Sprite13","order":13,"path":"sprites/Sprite13/Sprite13.yy",},
     {"name":"sprShieldIcon","order":11,"path":"sprites/sprShieldIcon/sprShieldIcon.yy",},
     {"name":"sprSpeedIcon","order":12,"path":"sprites/sprSpeedIcon/sprSpeedIcon.yy",},
