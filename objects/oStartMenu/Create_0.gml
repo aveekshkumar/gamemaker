@@ -13,6 +13,16 @@ if (file_exists(global.save_path)) {
     show_debug_message("❌ No save file found!");
 }
 
+// Define menu items
+menu_items = [
+    "Play",
+    "Shop",
+    "Gem Shop",
+    "Inventory",
+	"Daily login",
+    "Quit"
+];
+
 /// --- Sparkle Setup ---
 sparkle_max = 40;
 sparkles = [];
@@ -28,16 +38,6 @@ for (var i = 0; i < 50; i++) {
     };
     array_push(sparkles, s);
 }
-
-// Define menu items
-menu_items = [
-    "Play",
-    "Shop",
-    "Gem Shop",
-    "Inventory",
-	"Daily login",
-    "Quit"
-];
 
 menu_index = 0;
 fade_alpha = 0;

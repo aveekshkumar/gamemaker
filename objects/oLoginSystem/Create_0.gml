@@ -1,52 +1,48 @@
-// oLoginSystem Create Event
-
-// Create the pools with rewards
-green_pool = ds_list_create();
-ds_list_add(green_pool, 300, 150, 450, 600);
-
-red_pool = ds_list_create();
-ds_list_add(red_pool, 900, 10, 1000, 5, 20);
-
-purple_pool = ds_list_create();
-ds_list_add(purple_pool, 6000, 70, 50, 7000);
-
-// Variables for tracking login
-last_login_date = "";
-days_since_login = 0;
-
-// Function to claim daily reward
 function claim_daily_reward() {
-    var reward_type = irandom(2);
-    var reward = 0;
+    // Get last login date
+    ini_open(global.save_path);
+    var last_date = ini_read_string("LoginData", "LastClaimDate", "");
+    ini_close();
     
-    if (reward_type == 0) {
-        reward = ds_list_find_value(green_pool, irandom(ds_list_size(green_pool) - 1));
-        if (reward > 100) {
-            global.total_coins += reward;
-        } else {
-            global.total_gems += reward;
-        }
-        show_debug_message("🟢 Daily reward: " + string(reward));
+    var current_date = date_date_string(date_current_datetime());
+    var reward = 0;
+    var reward_type = 0;  // 0 = green, 1 = red, 2 = purple
+    
+    // Calculate days since last login
+    var days_diff = 0;
+    if (last_date != "") {
+        days_diff = date_get_day(date_create_from_datetime(
+            date_year_span(current_date, last_date),
+            date_month_span(current_date, last_date),
+            real(string_digits(current_date)), 0, 0, 0
+        ));
     }
-    else if (reward_type == 1) {
+    
+    // Determine which pool based on days
+    if (days_diff >= 30) {
+        reward_type = 2;  // Purple (monthly)
+        reward = ds_list_find_value(purple_pool, irandom(ds_list_size(purple_pool) - 1));
+        show_debug_message("🟣 Monthly reward: " + string(reward));
+    }
+    else if (days_diff >= 7) {
+        reward_type = 1;  // Red (weekly)
         reward = ds_list_find_value(red_pool, irandom(ds_list_size(red_pool) - 1));
-        if (reward > 100) {
-            global.total_coins += reward;
-        } else {
-            global.total_gems += reward;
-        }
         show_debug_message("🔴 Weekly reward: " + string(reward));
     }
     else {
-        reward = ds_list_find_value(purple_pool, irandom(ds_list_size(purple_pool) - 1));
-        if (reward > 100) {
-            global.total_coins += reward;
-        } else {
-            global.total_gems += reward;
-        }
-        show_debug_message("🟣 Monthly reward: " + string(reward));
+        reward_type = 0;  // Green (daily)
+        reward = ds_list_find_value(green_pool, irandom(ds_list_size(green_pool) - 1));
+        show_debug_message("🟢 Daily reward: " + string(reward));
     }
     
+    // Give reward
+    if (reward > 100) {
+        global.total_coins += reward;
+    } else {
+        global.total_gems += reward;
+    }
+    
+    // Save
     ini_open(global.save_path);
     ini_write_real("PlayerData", "TotalCoins", global.total_coins);
     ini_write_real("PlayerData", "Gems", global.total_gems);

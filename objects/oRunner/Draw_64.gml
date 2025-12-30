@@ -98,7 +98,7 @@ var txt   = "Coins: " + string(coins);
 var tw    = string_width(txt);
 var th    = string_height(txt);
 
-var icon_idx = asset_get_index("spr_coin");
+var icon_idx = sCoin;
 var has_icon = (icon_idx != -1);
 var icon_w   = has_icon ? max(16, sprite_get_width(icon_idx)) : 0;
 

@@ -70,7 +70,6 @@
     {"id":{"name":"rm_inventory","path":"rooms/rm_inventory/rm_inventory.yy",},},
     {"id":{"name":"rm_loader","path":"rooms/rm_loader/rm_loader.yy",},},
     {"id":{"name":"rm_logo","path":"rooms/rm_logo/rm_logo.yy",},},
-    {"id":{"name":"rm_preview","path":"rooms/rm_preview/rm_preview.yy",},},
     {"id":{"name":"rm_shop","path":"rooms/rm_shop/rm_shop.yy",},},
     {"id":{"name":"rm_start","path":"rooms/rm_start/rm_start.yy",},},
     {"id":{"name":"scr_save_game","path":"scripts/scr_save_game/scr_save_game.yy",},},
@@ -104,7 +103,6 @@
     {"roomId":{"name":"rm_gemshop","path":"rooms/rm_gemshop/rm_gemshop.yy",},},
     {"roomId":{"name":"rm_inventory","path":"rooms/rm_inventory/rm_inventory.yy",},},
     {"roomId":{"name":"rm_daily_login","path":"rooms/rm_daily_login/rm_daily_login.yy",},},
-    {"roomId":{"name":"rm_preview","path":"rooms/rm_preview/rm_preview.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[

@@ -49,7 +49,6 @@
     {"name":"rm_inventory","order":4,"path":"rooms/rm_inventory/rm_inventory.yy",},
     {"name":"rm_loader","order":6,"path":"rooms/rm_loader/rm_loader.yy",},
     {"name":"rm_logo","order":7,"path":"rooms/rm_logo/rm_logo.yy",},
-    {"name":"rm_preview","order":5,"path":"rooms/rm_preview/rm_preview.yy",},
     {"name":"rm_shop","order":2,"path":"rooms/rm_shop/rm_shop.yy",},
     {"name":"rm_start","order":1,"path":"rooms/rm_start/rm_start.yy",},
     {"name":"Script2","order":1,"path":"scripts/Script2/Script2.yy",},

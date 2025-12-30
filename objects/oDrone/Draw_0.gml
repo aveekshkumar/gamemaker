@@ -2,7 +2,7 @@
 
 // --- read runner glow (if present) ---
 var gf = 0;
-if (instance_exists(follow_target) && variable_instance_exists(follow_target, "glow_factor")) {
+if (instance_exists(follow_target)) {
     gf = follow_target.glow_factor;
 }
 
@@ -35,7 +35,7 @@ if (!goodbye && instance_exists(follow_target)) {
         var w = base_w + (2 - pass_i);
 
         draw_set_alpha(clamp(a, 0, 1));
-        draw_set_colour(base_col);
+        draw_set_color(base_col);
 
         lastx = x1; lasty = y1;
         for (var i = 1; i <= segs; i++) {
@@ -61,7 +61,7 @@ if (!goodbye && instance_exists(follow_target)) {
     draw_circle(x1, y1, 3, true);
     draw_circle(x2, y2, 3, true);
     draw_set_alpha(1);
-    draw_set_colour(c_white);
+    draw_set_color(c_white);
 }
 
 // =========================

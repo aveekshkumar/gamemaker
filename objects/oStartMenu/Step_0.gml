@@ -57,8 +57,3 @@ if (keyboard_check_pressed(ord("C"))) {
     ini_write_real("PlayerData", "Gems", global.total_gems);
     ini_close();
 }
-
-// --- Open Preview Room ---
-if (keyboard_check_pressed(ord("P"))) {
-    room_goto(rm_preview);
-}
