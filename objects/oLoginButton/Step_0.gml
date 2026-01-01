@@ -20,7 +20,7 @@ if (hover) {
 // If clicked
 if (mouse_over && mouse_check_button_pressed(mb_left)) {
     if (can_claim) {
-        oLoginSystem.claim_daily_reward();
+        claim_daily_reward();
         
         ini_open(global.save_path);
         ini_write_string("LoginData", "LastClaimDate", current_date);

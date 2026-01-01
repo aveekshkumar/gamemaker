@@ -51,6 +51,7 @@
     {"name":"rm_logo","order":7,"path":"rooms/rm_logo/rm_logo.yy",},
     {"name":"rm_shop","order":2,"path":"rooms/rm_shop/rm_shop.yy",},
     {"name":"rm_start","order":1,"path":"rooms/rm_start/rm_start.yy",},
+    {"name":"claim_daily_reward","order":2,"path":"scripts/claim_daily_reward/claim_daily_reward.yy",},
     {"name":"Script2","order":1,"path":"scripts/Script2/Script2.yy",},
     {"name":"sndBackgroundMusic2","order":1,"path":"sounds/sndBackgroundMusic2/sndBackgroundMusic2.yy",},
     {"name":"sndBackgroundMusic3","order":2,"path":"sounds/sndBackgroundMusic3/sndBackgroundMusic3.yy",},

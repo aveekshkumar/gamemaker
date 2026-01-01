@@ -72,6 +72,7 @@
     {"id":{"name":"rm_logo","path":"rooms/rm_logo/rm_logo.yy",},},
     {"id":{"name":"rm_shop","path":"rooms/rm_shop/rm_shop.yy",},},
     {"id":{"name":"rm_start","path":"rooms/rm_start/rm_start.yy",},},
+    {"id":{"name":"claim_daily_reward","path":"scripts/claim_daily_reward/claim_daily_reward.yy",},},
     {"id":{"name":"scr_save_game","path":"scripts/scr_save_game/scr_save_game.yy",},},
     {"id":{"name":"Script2","path":"scripts/Script2/Script2.yy",},},
     {"id":{"name":"sndBackgroundMusic1","path":"sounds/sndBackgroundMusic1/sndBackgroundMusic1.yy",},},
