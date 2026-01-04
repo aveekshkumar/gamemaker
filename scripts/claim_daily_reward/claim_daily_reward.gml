@@ -23,14 +23,26 @@ function claim_daily_reward() {
     var days_diff = 0;
     
     if (last_date != "") {
-        // Parse day/month/year format
+        // Parse day/month/year format (DD/MM/YY)
         var last_day = real(string_copy(last_date, 1, 2));
         var last_month = real(string_copy(last_date, 4, 2));
-        var last_year = real(string_copy(last_date, 7, 4));
+        var last_year_str = string_copy(last_date, 7, 2);
+        var last_year = real(last_year_str);
+        if (last_year < 50) {
+            last_year += 2000;
+        } else {
+            last_year += 1900;
+        }
         
         var curr_day = real(string_copy(current_date, 1, 2));
         var curr_month = real(string_copy(current_date, 4, 2));
-        var curr_year = real(string_copy(current_date, 7, 4));
+        var curr_year_str = string_copy(current_date, 7, 2);
+        var curr_year = real(curr_year_str);
+        if (curr_year < 50) {
+            curr_year += 2000;
+        } else {
+            curr_year += 1900;
+        }
         
         // Simple calculation
         if (curr_year == last_year && curr_month == last_month) {
@@ -54,6 +66,9 @@ function claim_daily_reward() {
     else if (days_diff >= 1) {
         pool_choice = 0;  // GREEN
     }
+	
+	show_debug_message("Last date: " + last_date + " | Current date: " + current_date);
+    show_debug_message("Days diff: " + string(days_diff));
     
     // Get reward from chosen pool
     if (pool_choice == 0) {
