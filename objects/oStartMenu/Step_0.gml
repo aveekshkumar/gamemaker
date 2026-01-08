@@ -34,6 +34,16 @@ if (keyboard_check_pressed(vk_enter)) {
     }
 }
 
+// --- Menu Item Animation ---
+menu_scale = lerp(menu_scale, 1, 0.15);
+menu_glow = max(0, menu_glow - 0.05);
+
+// When menu changes, reset animation
+if (keyboard_check_pressed(vk_down) || keyboard_check_pressed(vk_up)) {
+    menu_scale = 1.15;  // Scale up when selected
+    menu_glow = 1;      // Glow bright
+}
+
 // --- DEBUG SHORTCUT: Add 1000 Gems ---
 if (keyboard_check_pressed(ord("G"))) {
     global.total_gems += 1000;

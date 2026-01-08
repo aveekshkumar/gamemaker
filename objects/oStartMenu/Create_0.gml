@@ -23,6 +23,9 @@ menu_items = [
     "Quit"
 ];
 
+menu_scale = 1;
+menu_glow = 0;
+
 /// --- Sparkle Setup ---
 sparkle_max = 40;
 sparkles = [];
