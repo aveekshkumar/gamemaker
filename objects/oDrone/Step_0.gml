@@ -111,3 +111,4 @@ if (instance_exists(oRunner)) {
             instance_destroy();
         }
     }
+}
