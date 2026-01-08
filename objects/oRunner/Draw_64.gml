@@ -6,7 +6,7 @@ draw_set_valign(fa_top);
 
 // Score (top-left)
 draw_sprite(sIconCoin, 0, 10, 10);
-draw_text(35, 10, "Score: " + string(global.score));
+draw_text_transformed(35, 10, "Score: " + string(global.score), score_bounce, score_bounce, 0);
 
 // --- Speed display (moved left) ---
 draw_set_halign(fa_left);

@@ -31,6 +31,16 @@ if (global.score > global.best_score) {
     ini_close();
 }
 
+// Animate score bounce
+if (score_display != global.score) {
+    score_display = global.score;
+    score_bounce = 1.3;  // Bounce size
+}
+
+if (score_bounce > 1) {
+    score_bounce = lerp(score_bounce, 1, 0.15);  // Smoothly return to normal
+}
+
  // Example base tick:
 global.score += 1 * global.score_mult;
 

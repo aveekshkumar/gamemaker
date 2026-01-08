@@ -193,6 +193,10 @@ death_timer  = 0;
 shadow_scale = 1;
 lane_flash_t = 0;
 
+// Score HUD bounce
+score_display = global.score;
+score_bounce = 1;  // Scale factor
+
 // Coin HUD pulse
 coin_hud_last  = coins;
 coin_hud_pulse = 0;
