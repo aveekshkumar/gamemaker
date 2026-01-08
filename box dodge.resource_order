@@ -36,6 +36,7 @@
     {"name":"oMovingObstacle","order":5,"path":"objects/oMovingObstacle/oMovingObstacle.yy",},
     {"name":"oObstacle","order":1,"path":"objects/oObstacle/oObstacle.yy",},
     {"name":"oParticle","order":4,"path":"objects/oParticle/oParticle.yy",},
+    {"name":"oParticle2","order":29,"path":"objects/oParticle2/oParticle2.yy",},
     {"name":"oPlayerPreview","order":19,"path":"objects/oPlayerPreview/oPlayerPreview.yy",},
     {"name":"oPopupText","order":23,"path":"objects/oPopupText/oPopupText.yy",},
     {"name":"oRewardDisplay","order":28,"path":"objects/oRewardDisplay/oRewardDisplay.yy",},

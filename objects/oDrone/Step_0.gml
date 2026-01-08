@@ -25,33 +25,51 @@ var range = 60; // pickup radius
 // ✅ Only collect coins after oRunner is fully initialized
 if (instance_exists(oRunner)) {
     with (oCoin)
+{
+    if (point_distance(x, y, other.x, other.y) < other.range)
     {
-        if (point_distance(x, y, other.x, other.y) < other.range)
+        if (instance_exists(oRunner))
         {
-            if (instance_exists(oRunner))
-            {
-                // ✅ SAFETY RELOAD
-                if (!file_exists(global.save_path)) {
-                    global.save_path = working_directory + "save.ini";
-                }
-                ini_open(global.save_path);
-                var loaded_total = ini_read_real("PlayerData", "TotalCoins", 0);
-                ini_close();
-                
-                if (loaded_total > global.total_coins) {
-                    global.total_coins = loaded_total;
-                }
-                
-                oRunner.coins += 1;
-                global.total_coins += 1;
-                
-                // ✅ SAVE GLOBAL TOTAL (like gems!)
-                ini_open(global.save_path);
-                ini_write_real("PlayerData", "TotalCoins", global.total_coins);
-                ini_close();
-                
-                show_debug_message("💾 Coins saved: " + string(global.total_coins));
+            // ✅ SAFETY RELOAD
+            if (!file_exists(global.save_path)) {
+                global.save_path = working_directory + "save.ini";
             }
+            ini_open(global.save_path);
+            var loaded_total = ini_read_real("PlayerData", "TotalCoins", 0);
+            ini_close();
+            
+            if (loaded_total > global.total_coins) {
+                global.total_coins = loaded_total;
+            }
+            
+            oRunner.coins += 1;
+            global.total_coins += 1;
+            
+            // ✅ SAVE GLOBAL TOTAL (like gems!)
+            ini_open(global.save_path);
+            ini_write_real("PlayerData", "TotalCoins", global.total_coins);
+            ini_close();
+            
+            show_debug_message("💾 Coins saved: " + string(global.total_coins));
+        }
+        
+        // ✅ PARTICLE EXPLOSION!
+            var num_particles = 180;
+            var angle_step = 360 / num_particles;
+        
+            for (var i = 0; i < num_particles; i++) {
+                var angle = i * angle_step;
+                var particle_x = x + lengthdir_x(5, angle);
+                var particle_y = y + lengthdir_y(5, angle);
+            
+                with (instance_create_layer(particle_x, particle_y, "Instances", oParticle2)) {
+                    direction = angle;
+                    speed = 3 + random(2);
+                    image_alpha = 0.8;
+                    lifetime = 30;
+                }
+            }
+        
             instance_destroy();
         }
     }
