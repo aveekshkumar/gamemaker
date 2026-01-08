@@ -75,21 +75,39 @@ if (instance_exists(oRunner)) {
     }
     
     with (oGemCoin)
+{
+    if (point_distance(x, y, other.x, other.y) < other.range)
     {
-        if (point_distance(x, y, other.x, other.y) < other.range)
+        if (instance_exists(oRunner))
         {
-            if (instance_exists(oRunner))
-            {
-                oRunner.gems += 1;
-                global.total_gems += 1;
-                
-                ini_open(global.save_path);
-                ini_write_real("PlayerData", "Gems", global.total_gems);
-                ini_close();
-                
-                show_debug_message("💎 Gems saved: " + string(global.total_gems));
+            oRunner.gems += 1;
+            global.total_gems += 1;
+            
+            ini_open(global.save_path);
+            ini_write_real("PlayerData", "Gems", global.total_gems);
+            ini_close();
+            
+            show_debug_message("💎 Gems saved: " + string(global.total_gems));
+        }
+        
+            // ✅ PARTICLE EXPLOSION (CYAN)!
+            var num_particles = 180;
+            var angle_step = 360 / num_particles;
+    
+            for (var i = 0; i < num_particles; i++) {
+                var angle = i * angle_step;
+                var particle_x = x + lengthdir_x(5, angle);
+                var particle_y = y + lengthdir_y(5, angle);
+        
+                with (instance_create_layer(particle_x, particle_y, "Instances", oParticle2)) {
+                    direction = angle;
+                    speed = 3 + random(2);
+                    image_alpha = 0.8;
+                    lifetime = 30;
+                    particle_color = c_cyan;  // Cyan for gems
+                }
             }
+        
             instance_destroy();
         }
     }
-}
