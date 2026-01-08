@@ -44,12 +44,16 @@ function claim_daily_reward() {
             curr_year += 1900;
         }
         
-        // Simple calculation
+        // Calculate days difference
         if (curr_year == last_year && curr_month == last_month) {
             days_diff = curr_day - last_day;
-        } else if (curr_year == last_year) {
-            days_diff = 30 + curr_day - last_day;
-        } else {
+        } 
+        else if (curr_year == last_year && curr_month > last_month) {
+            // Different month same year
+            days_diff = (30 - last_day) + curr_day;
+        }
+        else if (curr_year > last_year) {
+            // Different year
             days_diff = 365;
         }
     } else {
