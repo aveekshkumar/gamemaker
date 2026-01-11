@@ -44,18 +44,10 @@ function claim_daily_reward() {
             curr_year += 1900;
         }
         
-        // Calculate days difference
-        if (curr_year == last_year && curr_month == last_month) {
-            days_diff = curr_day - last_day;
-        } 
-        else if (curr_year == last_year && curr_month > last_month) {
-            // Different month same year
-            days_diff = (30 - last_day) + curr_day;
-        }
-        else if (curr_year > last_year) {
-            // Different year
-            days_diff = 365;
-        }
+        // Calculate days difference - Convert to total days
+        var last_total_days = (last_year * 365) + (last_month * 30) + last_day;
+        var curr_total_days = (curr_year * 365) + (curr_month * 30) + curr_day;
+        days_diff = curr_total_days - last_total_days;
     } else {
         days_diff = 1;
     }
