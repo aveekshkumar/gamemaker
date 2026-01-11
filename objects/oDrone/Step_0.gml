@@ -104,7 +104,7 @@ if (instance_exists(oRunner)) {
                     speed = 3 + random(2);
                     image_alpha = 0.8;
                     lifetime = 30;
-                    particle_color = c_cyan;  // Cyan for gems
+                    particle_color = c_aqua;  // aqua for gems
                 }
             }
         

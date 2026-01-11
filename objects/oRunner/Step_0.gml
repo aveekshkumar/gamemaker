@@ -158,22 +158,57 @@ if (magnet_active) {
 if (death_timer > 0) {
     death_timer--;
     if (death_timer <= 0) {
-    show_debug_message("💀 Game Over! Final coins this run: " + string(coins));
-    
-    // ✅ SAVE COINS BEFORE LEAVING!
-    show_debug_message("💀 Game Over! Final coins this run: " + string(coins));
-
-    ini_open(global.save_path);
-    ini_write_real("PlayerData", "TotalCoins", global.total_coins);  // ✅ USE GLOBAL!
-    ini_write_real("PlayerData", "Gems", global.total_gems);
-    ini_close();
-    show_debug_message("💾 SAVED on death: Coins=" + string(global.total_coins) + " Gems=" + string(global.total_gems));
-    
-    with (oGemCoin) instance_destroy();
-    with (oCoin) instance_destroy();
-    with (oObstacle) instance_destroy();
-    with (oDrone) goodbye = true;
-    room_goto(rm_start);
+        show_debug_message("💀 Game Over! Final coins this run: " + string(coins));
+        
+        // ✅ SAVE EVERYTHING IN ONE INI BLOCK
+        var run_score = global.score;
+        var save_file = game_save_id + "_leaderboard.ini";
+        
+        ini_open(save_file);
+        
+        // Save coins & gems
+        ini_write_real("PlayerData", "TotalCoins", global.total_coins);
+        ini_write_real("PlayerData", "Gems", global.total_gems);
+        
+        // Read existing top 5 scores
+        var scores = [];
+        for (var i = 1; i <= 5; i++) {
+            var score_val = ini_read_real("Leaderboard", "Score" + string(i), 0);
+            if (score_val > 0) {
+                array_push(scores, score_val);
+            }
+        }
+        
+        // Add new score
+        array_push(scores, run_score);
+        
+        // Sort descending (highest first)
+        array_sort(scores, false);
+        
+        // Keep only top 5
+        if (array_length(scores) > 5) {
+            array_resize(scores, 5);
+        }
+        
+        // Save leaderboard scores
+        for (var i = 0; i < array_length(scores); i++) {
+            ini_write_real("Leaderboard", "Score" + string(i + 1), scores[i]);
+        }
+        
+        ini_close();
+        
+        // Debug messages
+        show_debug_message("💾 SAVED on death: Coins=" + string(global.total_coins) + " Gems=" + string(global.total_gems));
+        show_debug_message("💾 Score saved: " + string(run_score));
+        show_debug_message("💾 Saved to: " + save_file);
+        
+        // Destroy objects
+        with (oGemCoin) instance_destroy();
+        with (oCoin) instance_destroy();
+        with (oObstacle) instance_destroy();
+        with (oDrone) goodbye = true;
+        
+        room_goto(rm_start);
     }
 }
 

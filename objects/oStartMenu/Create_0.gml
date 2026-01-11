@@ -15,6 +15,7 @@ if (file_exists(global.save_path)) {
 
 // Define menu items
 menu_items = [
+    "Leaderboard",
     "Play",
     "Shop",
     "Gem Shop",
