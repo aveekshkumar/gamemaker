@@ -25,13 +25,14 @@ if (keyboard_check_pressed(vk_enter)) {
 // --- Handle selection ---
 if (keyboard_check_pressed(vk_enter)) {
     switch (menu_index) {
-		case 0: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_leaderboard; break;
-        case 1: room_goto(rm_game); break;
-        case 2: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_shop; break;
-        case 3: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_gemshop; break;
-        case 4: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_inventory; break;
-		case 5: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_daily_login; break;
-        case 6: game_end(); break;
+		case 0: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_stats; break;
+		case 1: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_leaderboard; break;
+        case 2: room_goto(rm_game); break;
+        case 3: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_shop; break;
+        case 4: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_gemshop; break;
+        case 5: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_inventory; break;
+		case 6: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_daily_login; break;
+        case 7: game_end(); break;
     }
 }
 

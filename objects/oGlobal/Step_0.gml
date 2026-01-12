@@ -15,3 +15,8 @@ if (keyboard_check_pressed(vk_f9)) {
     file_delete(global.save_path);
     show_debug_message("🧹 Save file reset!");
 }
+
+/// --- oGlobal Step Event ---
+// Update playtime every frame
+var elapsed = (current_time - global.session_start_time) / 1000;  // convert to seconds
+global.total_playtime = elapsed;

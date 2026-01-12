@@ -63,6 +63,7 @@
     {"id":{"name":"oShop","path":"objects/oShop/oShop.yy",},},
     {"id":{"name":"oSpawner","path":"objects/oSpawner/oSpawner.yy",},},
     {"id":{"name":"oStartMenu","path":"objects/oStartMenu/oStartMenu.yy",},},
+    {"id":{"name":"oStats","path":"objects/oStats/oStats.yy",},},
     {"id":{"name":"oTransition","path":"objects/oTransition/oTransition.yy",},},
     {"id":{"name":"oWarning","path":"objects/oWarning/oWarning.yy",},},
     {"id":{"name":"rm_daily_login","path":"rooms/rm_daily_login/rm_daily_login.yy",},},
@@ -74,6 +75,7 @@
     {"id":{"name":"rm_logo","path":"rooms/rm_logo/rm_logo.yy",},},
     {"id":{"name":"rm_shop","path":"rooms/rm_shop/rm_shop.yy",},},
     {"id":{"name":"rm_start","path":"rooms/rm_start/rm_start.yy",},},
+    {"id":{"name":"rm_stats","path":"rooms/rm_stats/rm_stats.yy",},},
     {"id":{"name":"claim_daily_reward","path":"scripts/claim_daily_reward/claim_daily_reward.yy",},},
     {"id":{"name":"scr_save_game","path":"scripts/scr_save_game/scr_save_game.yy",},},
     {"id":{"name":"Script2","path":"scripts/Script2/Script2.yy",},},
@@ -108,6 +110,7 @@
     {"roomId":{"name":"rm_inventory","path":"rooms/rm_inventory/rm_inventory.yy",},},
     {"roomId":{"name":"rm_daily_login","path":"rooms/rm_daily_login/rm_daily_login.yy",},},
     {"roomId":{"name":"rm_leaderboard","path":"rooms/rm_leaderboard/rm_leaderboard.yy",},},
+    {"roomId":{"name":"rm_stats","path":"rooms/rm_stats/rm_stats.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[
