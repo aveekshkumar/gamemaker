@@ -198,14 +198,3 @@ if (night_mode) {
     draw_set_halign(fa_right); draw_set_valign(fa_top);
     draw_text(gw2 - 8, 40, "🌙 NIGHT MODE");
 }
-
-// Pause overlay
-var gw3 = display_get_gui_width();
-var gh3 = display_get_gui_height();
-if (game_paused) {
-    draw_set_alpha(0.6); draw_set_colour(c_black);
-    draw_rectangle(0,0,gw3,gh3,false); draw_set_alpha(1);
-    draw_set_halign(fa_center); draw_set_valign(fa_middle);
-    draw_set_colour(c_red);
-    draw_text(gw3/2, gh3/2, "PAUSED — Press P");
-}

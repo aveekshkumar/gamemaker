@@ -45,32 +45,53 @@ if (instance_exists(oRunner)) {
             oRunner.coins += 1;
             global.total_coins += 1;
             
-            // ✅ SAVE GLOBAL TOTAL (like gems!)
+            // ⭐ BATTLE PASS XP GAIN (1 coin = 2 XP)
+            global.bp_xp += 2;
+            
+            // ⭐ CHECK TIER UP (NO AUTO REWARD)
+            var xp_needed = 50 + (global.bp_tier - 1) * 10;  // 50, 60, 70, 80...
+            if (global.bp_xp >= xp_needed && global.bp_tier < 15) {
+                global.bp_xp -= xp_needed;
+                global.bp_tier += 1;
+                show_debug_message("⭐ TIER UP! Tier=" + string(global.bp_tier));
+            }
+            
+            // ✅ SAVE GLOBAL TOTAL & BATTLE PASS DATA
             ini_open(global.save_path);
             ini_write_real("PlayerData", "TotalCoins", global.total_coins);
+            ini_write_real("BattlePass", "Tier", global.bp_tier);
+            ini_write_real("BattlePass", "XP", global.bp_xp);
+            
+            // ⭐ SAVE CLAIMED TIERS
+            var claimed_str = "";
+            for (var i = 0; i < ds_list_size(global.bp_claimed_tiers); i++) {
+                claimed_str += string(global.bp_claimed_tiers[| i]);
+                if (i < ds_list_size(global.bp_claimed_tiers) - 1) claimed_str += ",";
+            }
+            ini_write_string("BattlePass", "ClaimedTiers", claimed_str);
             ini_close();
             
             show_debug_message("💾 Coins saved: " + string(global.total_coins));
         }
         
         // ✅ PARTICLE EXPLOSION!
-            var num_particles = 180;
-            var angle_step = 360 / num_particles;
+        var num_particles = 180;
+        var angle_step = 360 / num_particles;
+    
+        for (var i = 0; i < num_particles; i++) {
+            var angle = i * angle_step;
+            var particle_x = x + lengthdir_x(5, angle);
+            var particle_y = y + lengthdir_y(5, angle);
         
-            for (var i = 0; i < num_particles; i++) {
-                var angle = i * angle_step;
-                var particle_x = x + lengthdir_x(5, angle);
-                var particle_y = y + lengthdir_y(5, angle);
-            
-                with (instance_create_layer(particle_x, particle_y, "Instances", oParticle2)) {
-                    direction = angle;
-                    speed = 3 + random(2);
-                    image_alpha = 0.8;
-                    lifetime = 30;
-                }
+            with (instance_create_layer(particle_x, particle_y, "Instances", oParticle2)) {
+                direction = angle;
+                speed = 3 + random(2);
+                image_alpha = 0.8;
+                lifetime = 30;
             }
-        
-            instance_destroy();
+        }
+    
+        instance_destroy();
         }
     }
     
@@ -90,25 +111,25 @@ if (instance_exists(oRunner)) {
             show_debug_message("💎 Gems saved: " + string(global.total_gems));
         }
         
-            // ✅ PARTICLE EXPLOSION (CYAN)!
-            var num_particles = 180;
-            var angle_step = 360 / num_particles;
+        // ✅ PARTICLE EXPLOSION (CYAN)!
+        var num_particles = 180;
+        var angle_step = 360 / num_particles;
+
+        for (var i = 0; i < num_particles; i++) {
+            var angle = i * angle_step;
+            var particle_x = x + lengthdir_x(5, angle);
+            var particle_y = y + lengthdir_y(5, angle);
     
-            for (var i = 0; i < num_particles; i++) {
-                var angle = i * angle_step;
-                var particle_x = x + lengthdir_x(5, angle);
-                var particle_y = y + lengthdir_y(5, angle);
-        
-                with (instance_create_layer(particle_x, particle_y, "Instances", oParticle2)) {
-                    direction = angle;
-                    speed = 3 + random(2);
-                    image_alpha = 0.8;
-                    lifetime = 30;
-                    particle_color = c_aqua;  // aqua for gems
-                }
+            with (instance_create_layer(particle_x, particle_y, "Instances", oParticle2)) {
+                direction = angle;
+                speed = 3 + random(2);
+                image_alpha = 0.8;
+                lifetime = 30;
+                particle_color = c_aqua;  // aqua for gems
             }
-        
-            instance_destroy();
+        }
+    
+        instance_destroy();
         }
     }
 }

@@ -8,17 +8,6 @@ if (!variable_instance_exists(self, "coins_initialized")) {
 
 if (!variable_global_exists("scroll_speed")) global.scroll_speed = 4.5; // adjust for balance
 
-// Pause toggle
-if (keyboard_check_pressed(ord("P"))) {
-    global.game_paused = !global.game_paused;
-
-    if (global.game_paused) {
-        audio_pause_all();
-    } else {
-        audio_resume_all();
-    }
-}
-
 // Skip updates when paused
 if (global.game_paused) exit;
 

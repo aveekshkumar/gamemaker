@@ -41,7 +41,8 @@ if (obs_timer >= obs_interval) {
 
 // --- COINS ---
 coin_timer++;
-show_debug_message("🪙 Coin timer: " + string(coin_timer) + " | Need: " + string(round(coin_base / diff_scale)) + " | Coins on screen: " + string(instance_number(oCoin) + instance_number(oGemCoin)));
+var coins_on_screen = instance_number(oCoin) + instance_number(oGemCoin);
+show_debug_message("🪙 Coin timer: " + string(coin_timer) + " | Need: " + string(round(coin_base / diff_scale)) + " | Coins on screen: " + string(coins_on_screen));
 if (coin_timer >= round(coin_base / diff_scale) && (instance_number(oCoin) + instance_number(oGemCoin)) < coin_cap) {
     show_debug_message("✅ SPAWNING COINS!");
 	coin_timer = 0;
