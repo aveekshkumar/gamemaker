@@ -32,7 +32,6 @@ if (keyboard_check_pressed(vk_enter)) {
         case 4: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_gemshop; break;
         case 5: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_inventory; break;
 		case 6: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_daily_login; break;
-        case 7: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_battle_pass; break;
 		case 8: game_end(); break;
     }
 }

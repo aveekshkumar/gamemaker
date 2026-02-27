@@ -191,6 +191,25 @@ if (death_timer > 0) {
         show_debug_message("💾 Score saved: " + string(run_score));
         show_debug_message("💾 Saved to: " + save_file);
         
+		// ✅ UPDATE BEST SCORE
+        if (run_score > global.best_score) {
+            global.best_score = run_score;
+        }
+
+        // ✅ UPDATE STATS
+        global.games_played += 1;
+        var session_duration = (current_time - global.session_start_time) / 1000;  // convert to seconds
+        global.total_playtime += session_duration;
+		
+        // Save stats
+        ini_open(save_file);
+        ini_write_real("Statistics", "BestScore", global.best_score);
+        ini_write_real("Statistics", "GamesPlayed", global.games_played);
+        ini_write_real("Statistics", "TotalPlaytime", global.total_playtime);
+        ini_close();
+
+        show_debug_message("📊 Stats updated: Best=" + string(global.best_score) + " Games=" + string(global.games_played));
+		
         // Destroy objects
         with (oGemCoin) instance_destroy();
         with (oCoin) instance_destroy();

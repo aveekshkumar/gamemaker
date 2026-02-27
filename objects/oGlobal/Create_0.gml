@@ -25,6 +25,10 @@ global.session_start_time = current_time;
 show_debug_message("📊 Stats loaded: Best=" + string(global.best_score) + " Games=" + string(global.games_played) + " Playtime=" + string(global.total_playtime));
 
 // Initialize coins/gems
+// ✅ SET SAVE PATH FIRST
+global.save_path = game_save_id + "_leaderboard.ini";
+
+// ✅ Initialize ALL globals to 0 FIRST
 if (!variable_global_exists("total_coins")) global.total_coins = 0;
 if (!variable_global_exists("total_gems")) global.total_gems = 0;
 if (!variable_global_exists("owned_shield")) global.owned_shield = 0;
@@ -120,3 +124,19 @@ if (claimed_tiers_str != "") {
 }
 
 show_debug_message("⭐ Battle Pass loaded: Tier=" + string(global.bp_tier) + " XP=" + string(global.bp_xp));
+
+// === STATISTICS TRACKING ===
+global.best_score = 0;
+global.games_played = 0;
+global.total_playtime = 0;  // in seconds
+global.session_start_time = 0;
+
+// Load stats from INI (NOW global.save_path exists!)
+ini_open(global.save_path);
+global.best_score = ini_read_real("Statistics", "BestScore", 0);
+global.games_played = ini_read_real("Statistics", "GamesPlayed", 0);
+global.total_playtime = ini_read_real("Statistics", "TotalPlaytime", 0);
+global.session_start_time = ini_read_real("Statistics", "SessionStartTime", current_time);
+ini_close();
+
+show_debug_message("📊 Stats loaded: Best=" + string(global.best_score) + " Games=" + string(global.games_played));
