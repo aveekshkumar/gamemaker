@@ -16,13 +16,13 @@ if (file_exists(global.save_path)) {
 // Define menu items
 menu_items = [
     "Stats",
-    "Profile",
     "Leaderboard",
     "Play",
     "Shop",
     "Gem Shop",
     "Inventory",
 	"Daily login",
+	"Character Pick",
     "Quit"
 ];
 

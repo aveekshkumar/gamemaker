@@ -1,4 +1,14 @@
 /// --- oRunner Create Event ---
+// ⭐ CHARACTER SCALE BASED ON SELECTION
+if (global.selected_character == "krishna") {
+    image_xscale = 1.75;
+    image_yscale = 1.75;
+    sprite_index = sKrishna;
+} else if (global.selected_character == "rama") {
+    image_xscale = 2.25;
+    image_yscale = 2.25;
+    sprite_index = sRama;
+}
 /// Reset coins for this run
 coins = 0;
 gems = 0;

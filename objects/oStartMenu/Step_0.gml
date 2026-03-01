@@ -32,6 +32,7 @@ if (keyboard_check_pressed(vk_enter)) {
         case 4: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_gemshop; break;
         case 5: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_inventory; break;
 		case 6: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_daily_login; break;
+		case 7: var t = instance_create_layer(0, 0, "Instances", oTransition); t.next_room = rm_character_pick; break;
 		case 8: game_end(); break;
     }
 }
@@ -46,10 +47,10 @@ if (keyboard_check_pressed(vk_down) || keyboard_check_pressed(vk_up)) {
     menu_glow = 1;      // Glow bright
 }
 
-// --- DEBUG SHORTCUT: Add 1000 Gems ---
+// --- DEBUG SHORTCUT: Add 50000 Gems ---
 if (keyboard_check_pressed(ord("G"))) {
-    global.total_gems += 1000;
-    show_debug_message("💎 Added 1000 Gems! Total: " + string(global.total_gems));
+    global.total_gems += 50000;
+    show_debug_message("💎 Added 50000 Gems! Total: " + string(global.total_gems));
     
     ini_open(global.save_path);
     ini_write_real("PlayerData", "TotalCoins", global.total_coins);
@@ -59,10 +60,10 @@ if (keyboard_check_pressed(ord("G"))) {
     show_debug_message("💾 Gems saved successfully!");
 }
 
-// --- DEBUG SHORTCUT: Add 500 Coins ---
+// --- DEBUG SHORTCUT: Add 50000 Coins ---
 if (keyboard_check_pressed(ord("C"))) {
-    global.total_coins += 500;
-    show_debug_message("💰 Added 500 Coins! Total: " + string(global.total_coins));
+    global.total_coins += 50000;
+    show_debug_message("💰 Added 50000 coins! Total: " + string(global.total_coins));
     
     ini_open(global.save_path);
     ini_write_real("PlayerData", "TotalCoins", global.total_coins);

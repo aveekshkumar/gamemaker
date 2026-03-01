@@ -140,3 +140,5 @@ global.session_start_time = ini_read_real("Statistics", "SessionStartTime", curr
 ini_close();
 
 show_debug_message("📊 Stats loaded: Best=" + string(global.best_score) + " Games=" + string(global.games_played));
+
+global.selected_character = "krishna";  // Default to Krishna
